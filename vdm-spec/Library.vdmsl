@@ -1,0 +1,27 @@
+types
+  Book = token;
+  User = token;
+
+state LibraryState of
+  available : set of Book
+  issued : map Book to User
+init s == s = mk_LibraryState({}, {|->})
+end
+
+operations
+
+IssueBook: Book * User ==> ()
+IssueBook(b, u) ==
+(
+  issued := issued munion {b |-> u};
+  available := available \ {b}
+)
+pre b in set available;
+
+ReturnBook: Book ==> ()
+ReturnBook(b) ==
+(
+  available := available union {b};
+  issued := {b} <-: issued
+)
+pre b in set dom issued;
